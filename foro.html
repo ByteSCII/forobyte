@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Byte - Foro de la Comunidad</title>
+    <link rel="icon" type="image/x-icon" href="./images/logo.ico">
+    <meta name="description" content="Foro de la comunidad Byte para compartir ideas, hacer preguntas y conectar.">
+    <meta name="keywords" content="Byte, foro, comunidad, discusión, preguntas, respuestas, publicaciones, fotos, comentarios, reacciones">
+    <meta property="og:title" content="Byte - Foro de la Comunidad">
+    <meta property="og:description" content="Foro de la comunidad Byte para crear una identidad visual impactante para tu marca.">
+    <meta property="og:type" content="website">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom Tailwind CSS Configuration - Must be loaded before other styles */
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                        navigation: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        'byte-dark-bg': '#0A0A1A',
+                        'byte-accent-cyan': '#00FFFF',
+                        'byte-light-bg': '#F8FAFC',
+                        'byte-text-dark': '#374151',
+                        'byte-text-light': '#F9FAFB',
+                        'byte-secondary-dark': '#1A202C',
+                        'whatsapp-green': '#25D366',
+                        'whatsapp-dark-green': '#128C7E',
+                    }
+                }
+            }
+        };
+
+        /* Box-Sizing universal para un modelo de caja consistente */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Estilos base para HTML y Body */
+        html {
+            height: 100%;
+            width: 100%;
+        }
+        body {
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden; /* Asegura que no haya scroll horizontal no deseado */
+            background-color: #0A0A1A; /* Color de fondo base, sin animación */
+            font-family: 'Inter', sans-serif; /* Aplicando Inter como fuente principal */
+            color: #F9FAFB;
+            margin: 0;
+            padding: 0;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Estilos para encabezados (h1-h6) */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif; /* Aplicando Montserrat para encabezados */
+            color: #00FFFF;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+        }
+
+        /* Estilo de contorno de texto */
+        .text-stroke-cyan {
+            -webkit-text-stroke: 1.5px #00FFFF;
+            text-stroke: 1.5px #00FFFF;
+            color: #FFFFFF;
+            text-shadow: none;
+        }
+
+        /* Estilo de enlace deshabilitado */
+        .disabled-link {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Estilos para deshabilitar la selección de texto y eventos de puntero en imágenes */
+        img {
+            pointer-events: none;
+            max-width: 100%; /* Asegura que las imágenes no desborden su contenedor */
+            height: auto;    /* Mantiene la proporción de la imagen */
+            display: block;  /* Evita espacio extra debajo de las imágenes */
+        }
+        p, h1, h2, h3, h4, h5, h6, span, div:not(.map-container):not(.payment-card) {
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        /* Estilos para el botón de "Volver arriba" */
+        #scroll-to-top-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #00FFFF; /* Cian */
+            color: #0A0A1A; /* Texto oscuro de Byte */
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 12px rgba(0, 255, 255, 0.3);
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, transform 0.2s ease;
+            z-index: 9999;
+        }
+
+        #scroll-to-top-button.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #scroll-to-top-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 255, 255, 0.5);
+        }
+
+        /* Estilos para el encabezado que se oculta/muestra */
+        .main-header {
+            background-color: #0A0A1A; /* Fondo oscuro */
+            color: #F9FAFB; /* Texto claro */
+            padding: 0.5rem 0; /* Relleno */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+            position: fixed; /* Fijo en la parte superior */
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 50; /* Asegura que esté por encima del contenido */
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; /* Transición suave */
+        }
+
+        .main-header.header-hide {
+            transform: translateY(-100%); /* Desliza hacia arriba para ocultar */
+            opacity: 0; /* Desvanece */
+        }
+
+        /* Estilos para los iconos SVG en el footer */
+        .footer-social-icon {
+            width: 1.75rem; /* Tamaño de los iconos sociales */
+            height: 1.75rem;
+            /* fill: currentColor; */ /* Usa el color del texto del padre */
+            transition: transform 0.3s ease, fill 0.3s ease;
+        }
+
+        .footer-social-icon:hover {
+            fill: #00FFFF; /* Cian al pasar el ratón */
+            transform: translateY(-3px) scale(1.1);
+        }
+
+        /* Estilos específicos para el foro */
+        .forum-section {
+            background: linear-gradient(145deg, #1A202C, #0A0A1A);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            box-shadow: 0 10px 25px rgba(0, 255, 255, 0.2);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        .post-card {
+            background: linear-gradient(145deg, #1A202C, #0A0A1A);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .post-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 0.75rem;
+            border: 2px solid #00FFFF;
+        }
+
+        .post-author {
+            font-weight: 600;
+            color: #00FFFF;
+        }
+
+        .post-timestamp {
+            font-size: 0.8rem;
+            color: #9CA3AF;
+        }
+
+        .post-content {
+            color: #CBD5E0;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .post-image {
+            max-width: 100%;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(0, 255, 255, 0.1);
+            margin-top: 1rem;
+        }
+
+        .reaction-button {
+            background: none;
+            border: none;
+            color: #CBD5E0;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .reaction-button:hover {
+            color: #00FFFF;
+            transform: translateY(-2px);
+        }
+
+        .reaction-button.active {
+            color: #FFD700; /* Gold for active reaction */
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+
+        .reaction-count {
+            font-size: 0.9rem;
+            color: #9CA3AF;
+            margin-left: 0.5rem;
+        }
+
+        .comment-section {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 255, 255, 0.1);
+        }
+
+        .comment-input-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .comment-input {
+            flex-grow: 1;
+            background-color: #1A202C;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            color: #F9FAFB;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .comment-input::placeholder {
+            color: #9CA3AF;
+        }
+
+        .comment-button {
+            background-color: #00FFFF;
+            color: #0A0A1A;
+            font-weight: 600;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .comment-button:hover {
+            background-color: #00E5E5;
+            transform: translateY(-1px);
+        }
+
+        .comment-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comment-item {
+            background-color: rgba(26, 32, 44, 0.7); /* Slightly lighter dark background */
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: #00FFFF;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .comment-text {
+            color: #CBD5E0;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        /* Formulario para crear nuevas publicaciones */
+        .new-post-form {
+            background: linear-gradient(145deg, #1A202C, #0A0A1A);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            box-shadow: 0 10px 25px rgba(0, 255, 255, 0.2);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        .new-post-form textarea {
+            width: 100%;
+            background-color: #1A202C;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            color: #F9FAFB;
+            font-size: 1rem;
+            min-height: 100px;
+            resize: vertical;
+            outline: none;
+            margin-bottom: 1rem;
+        }
+
+        .new-post-form input[type="file"] {
+            display: block;
+            margin-bottom: 1rem;
+            color: #F9FAFB;
+            background-color: #1A202C;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+        }
+
+        .new-post-form button[type="submit"] {
+            background-color: #25D366; /* WhatsApp Green */
+            color: #0A0A1A;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            width: 100%; /* Full width button */
+        }
+
+        .new-post-form button[type="submit"]:hover {
+            background-color: #128C7E;
+            transform: translateY(-2px);
+        }
+
+        /* Login/User Info Bar */
+        #user-info-bar {
+            background-color: #1A202C;
+            color: #F9FAFB;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #user-info-bar button {
+            background-color: #00FFFF;
+            color: #0A0A1A;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        #user-info-bar button:hover {
+            background-color: #00E5E5;
+            transform: translateY(-1px);
+        }
+
+        /* Modal Styles for Profile Creation / Login */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #1A202C, #0A0A1A);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.4);
+            max-width: 90%;
+            width: 500px;
+            text-align: center;
+            position: relative;
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal-content h3 {
+            color: #F9FAFB;
+            text-shadow: none;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .modal-content p {
+            color: #F9FAFB;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-content input[type="text"],
+        .modal-content input[type="email"],
+        .modal-content input[type="password"], /* Added password input styling */
+        .modal-content input[type="file"] {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            background-color: #0A0A1A;
+            color: #F9FAFB;
+            font-size: 1rem;
+        }
+
+        .modal-content input[type="text"]::placeholder,
+        .modal-content input[type="email"]::placeholder,
+        .modal-content input[type="password"]::placeholder {
+            color: #9CA3AF;
+        }
+
+        .modal-content button {
+            background-color: #25D366;
+            color: #0A0A1A;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            width: 100%;
+        }
+
+        .modal-content button:hover {
+            background-color: #128C7E;
+            transform: translateY(-2px);
+        }
+
+        .modal-error-message {
+            color: #FF6347; /* Tomato red for errors */
+            font-size: 0.9rem;
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
+            text-align: left;
+            padding-left: 0.5rem;
+        }
+
+        /* Styles for authentication form */
+        #auth-form .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        #auth-form .auth-buttons button {
+            flex-grow: 1;
+        }
+
+        #auth-form .forgot-password-link {
+            display: block;
+            margin-top: 1rem;
+            color: #00FFFF;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        #auth-form .forgot-password-link:hover {
+            color: #00E5E5;
+        }
+
+        /* Styles for profile form (inside auth modal) */
+        #profile-form-container {
+            display: none; /* Hidden by default */
+        }
+
+        #profile-form-container.show {
+            display: block;
+        }
+
+        /* Media Queries for responsiveness */
+        @media (max-width: 768px) {
+            .main-header img {
+                height: 48px; /* h-12 en Tailwind */
+            }
+            .main-header a.inline-block {
+                padding: 0.5rem 0.75rem; /* Reducir padding del botón */
+                font-size: 0.875rem; /* text-sm */
+            }
+            main.container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+                padding-top: 1rem; /* Ajustar padding superior de main */
+            }
+            .forum-section, .new-post-form {
+                padding: 1.5rem;
+            }
+            .post-card {
+                padding: 1rem;
+            }
+            .post-author {
+                font-size: 0.95rem;
+            }
+            .post-timestamp {
+                font-size: 0.7rem;
+            }
+            .post-content {
+                font-size: 0.9rem;
+            }
+            .reaction-button {
+                font-size: 1rem;
+                gap: 0.25rem;
+            }
+            .reaction-count {
+                font-size: 0.8rem;
+            }
+            .comment-input {
+                padding: 0.6rem;
+                font-size: 0.85rem;
+            }
+            .comment-button {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+            .comment-item {
+                padding: 0.6rem 0.8rem;
+            }
+            .comment-author {
+                font-size: 0.8rem;
+            }
+            .comment-text {
+                font-size: 0.75rem;
+            }
+            .new-post-form textarea,
+            .new-post-form input[type="file"],
+            .new-post-form button[type="submit"] {
+                font-size: 0.9rem;
+            }
+            #user-info-bar {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+            #user-info-bar button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            .modal-content {
+                padding: 1.5rem;
+            }
+            .modal-content h3 {
+                font-size: 1.5rem;
+            }
+            .modal-content p {
+                font-size: 0.9rem;
+            }
+            .modal-content input[type="text"],
+            .modal-content input[type="email"],
+            .modal-content input[type="password"],
+            .modal-content button {
+                font-size: 0.9rem;
+                padding: 0.6rem;
+            }
+            #auth-form .auth-buttons {
+                flex-direction: column; /* Stack buttons on small screens */
+                gap: 0.75rem;
+            }
+        }
+
+        /* Firebase Status Indicator Styles */
+        #firebase-status-indicator {
+            position: fixed;
+            bottom: 80px; /* Adjust based on scroll-to-top button */
+            left: 20px;
+            background-color: #1A202C;
+            color: #F9FAFB;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            z-index: 9998; /* Below scroll-to-top button */
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        #firebase-status-indicator.connected {
+            background-color: #25D366; /* WhatsApp Green */
+            color: #0A0A1A;
+        }
+
+        #firebase-status-indicator.disconnected {
+            background-color: #FF6347; /* Tomato Red */
+            color: #F9FAFB;
+        }
+
+        #firebase-status-indicator i {
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <header id="main-header" class="main-header">
+        <div class="w-full px-4 sm:px-6 md:px-8 flex justify-between items-center">
+            <div class="flex items-center justify-start">
+                <img src="./images/logo.ico" alt="Logo de Byte" class="h-12 sm:h-16 w-auto object-contain">
+            </div>
+
+            <a href="index.html" class="inline-block bg-yellow-500 text-black font-bold py-2 px-4 rounded-full
+                                        shadow-lg hover:bg-yellow-600 transition duration-300 transform hover:scale-110 text-sm md:text-base">
+                Volver al inicio
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 sm:px-6 py-8 md:py-12 mt-20">
+        <section class="p-4 sm:p-6 md:p-8">
+            <h1 class="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-8 md:mb-10 text-stroke-cyan">Foro de la Comunidad Byte</h1>
+
+            <div id="user-info-bar">
+                <span id="user-status">Cargando usuario...</span>
+                <button id="login-button">Iniciar Sesión</button>
+            </div>
+
+            <div class="new-post-form">
+                <h2 class="text-xl sm:text-2xl font-semibold text-center mb-4 text-byte-accent-cyan">Crear Nueva Publicación</h2>
+                <form id="new-post-form">
+                    <textarea id="post-text" placeholder="¿Qué tienes en mente?" class="mb-4"></textarea>
+                    <input type="file" id="post-image-upload" accept="image/*" class="mb-4">
+                    <button type="submit" id="submit-post-button" disabled>Publicar</button>
+                </form>
+            </div>
+
+            <div id="forum-posts-container" class="forum-section">
+                <h2 class="text-xl sm:text-2xl font-semibold text-center mb-6 text-byte-accent-cyan">Últimas Publicaciones</h2>
+                </div>
+        </section>
+    </main>
+
+    <button id="scroll-to-top-button">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <div id="firebase-status-indicator">
+        <i class="fas fa-circle"></i>
+        <span>Estado de Firebase: Conectando...</span>
+    </div>
+
+    <footer class="footer bg-byte-secondary-dark text-byte-text-light py-6 sm:py-8">
+        <div class="container mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-center">
+            <div class="md:col-span-3 flex justify-center space-x-4 mt-3">
+                <a href="https://www.instagram.com/byteweb_design?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                    <svg class="footer-social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                        <radialGradient id="yOrnnhliCrdS2gy~4tD8ma-footer" cx="19.38" cy="42.035" r="44.899" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fd5"/><stop offset=".328" stop-color="#ff543f"/><stop offset=".348" stop-color="#fc5245"/><stop offset=".504" stop-color="#e64771"/><stop offset=".643" stop-color="#d53e91"/><stop offset=".761" stop-color="#cc39a4"/><stop offset=".841" stop-color="#c837ab"/></radialGradient><path fill="url(#yOrnnhliCrdS2gy~4tD8ma-footer)" d="M34.017,41.99l-20,0.019c-4.4,0.004-8.003-3.592-8.008-7.992l-0.019-20	c-0.004-4.4,3.592-8.003,7.992-8.008l20-0.019c4.4-0.004,8.003,3.592,8.008,7.992l0.019,20	C42.014,38.383,38.417,41.986,34.017,41.99z"/><radialGradient id="yOrnnhliCrdS2gy~4tD8mb-footer" cx="11.786" cy="5.54" r="29.813" gradientTransform="matrix(1 0 0 .6663 0 1.849)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4168c9"/><stop offset=".999" stop-color="#4168c9" stop-opacity="0"/></radialGradient><path fill="url(#yOrnnhliCrdS2gy~4tD8mb-footer)" d="M34.017,41.99l-20,0.019c-4.4,0.004-8.003-3.592-8.008-7.992l-0.019-20	c-0.004-4.4,3.592-8.003,7.992-8.008l20-0.019c4.4-0.004,8.003,3.592,8.008,7.992l0.019,20	C42.014,38.383,38.417,41.986,34.017,41.99z"/><path fill="#fff" d="M24,31c-3.859,0-7-3.14-7-7s3.141-7,7-7s7,3.14,7,7S27.859,31,24,31z M24,19c-2.757,0-5,2.243-5,5	s2.243,5,5,5s5-2.243,5-5S26.757,19,24,19z"/><circle cx="31.5" cy="16.5" r="1.5" fill="#fff"/><path fill="#fff" d="M30,37H18c-3.859,0-7-3.14-7-7V18c0-3.86,3.141-7,7-7h12c3.859,0,7,3.14,7,7v12	C37,33.86,33.859,37,30,37z M18,13c-2.757,0-5,2.243-5,5v12c0,2.757,2.243,5,5,5h12c2.757,0,5-2.243,5-5V18c0-2.757-2.243-5-5-5H18z"/>
+                    </svg>
+                </a>
+                <a href="https://wa.me/584125646608" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                    <i class="fab fa-whatsapp footer-social-icon text-byte-text-light"></i>
+                </a>
+            </div>
+        </div>
+        <div class="container mx-auto px-4 sm:px-6 text-center text-xs text-gray-400 mt-6 sm:mt-8 border-t border-gray-700 pt-4">
+            <p class="mb-2">
+                Al navegar en la página de Byte, aceptas nuestros
+                <a href="#" class="text-byte-accent-cyan hover:underline disabled-link">Términos de Servicio</a> y
+                <a href="#" class="text-byte-accent-cyan hover:underline disabled-link">Condiciones</a>.
+            </p>
+            <p>© 2025 Byte. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <div id="auth-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="auth-modal-title">Bienvenido al Foro de Byte</h3>
+            <p id="auth-modal-description">Inicia sesión o regístrate para participar.</p>
+
+            <form id="auth-form">
+                <input type="email" id="auth-email-input" placeholder="Correo electrónico" required>
+                <div id="auth-email-error-message" class="modal-error-message hidden"></div>
+                <input type="password" id="auth-password-input" placeholder="Contraseña" required>
+                <div id="auth-password-error-message" class="modal-error-message hidden"></div>
+
+                <div class="auth-buttons">
+                    <button type="button" id="register-button">Registrarse</button>
+                    <button type="button" id="login-form-button">Iniciar Sesión</button>
+                </div>
+                <a href="#" id="forgot-password-link" class="forgot-password-link">¿Olvidaste tu contraseña?</a>
+                <div id="auth-general-error-message" class="modal-error-message hidden"></div>
+            </form>
+
+            <div id="profile-form-container" class="hidden">
+                <h3>Completa tu Perfil</h3>
+                <p>Para participar en la comunidad, por favor, dinos tu nombre y sube una foto de perfil.</p>
+                <form id="profile-form">
+                    <input type="text" id="profile-name-input" placeholder="Tu nombre" required>
+                    <div id="profile-name-error-message" class="modal-error-message hidden"></div>
+                    <label for="profile-avatar-upload" class="block text-left text-byte-text-light text-sm mb-1">
+                        Foto de Perfil (obligatoria):
+                    </label>
+                    <input type="file" id="profile-avatar-upload" accept="image/*" class="mb-4" required>
+                    <div id="profile-avatar-error-message" class="modal-error-message hidden"></div>
+                    <button type="submit">Guardar Perfil</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        (function() {
+            var chatBotEl = document.createElement('chat-bot');
+            chatBotEl.setAttribute('platform_id', 'c53f3ecc-023b-4e9b-9289-d92fc39e8fd6');
+            chatBotEl.setAttribute('user_id', 'df3ac4f2-1102-4134-9692-f88cb8c4461d');
+            chatBotEl.setAttribute('chatbot_id', 'c289fafb-ec5e-4124-9fb6-c04fed5f6e37');
+            var chatbotLink = document.createElement('a');
+            chatbotLink.href = 'https://www.chatsimple.ai/?utm_source=widget&utm_medium=referral';
+            chatbotLink.innerHTML = 'chatsimple';
+            chatBotEl.appendChild(chatbotLink);
+            document.body.appendChild(chatBotEl);
+
+            var cs = document.createElement('script');
+            cs.src = 'https://chatsimple-widget.s3.us-east-2.amazonaws.com/chat-bot-loader.js';
+            document.body.appendChild(cs);
+        })();
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            signOut,
+            sendPasswordResetEmail // Import for password reset
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, query, onSnapshot, addDoc, doc, updateDoc, arrayUnion, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Configuración REAL de tu proyecto de Firebase (ByteForo)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWZItBsYQqOm3xzp_VKsI3KfhbvVvtMv0",
+            authDomain: "byteforo.firebaseapp.com",
+            projectId: "byteforo",
+            storageBucket: "byteforo.firebasestorage.app",
+            messagingSenderId: "583747734708",
+            appId: "1:583747734708:web:fcac1599ca9180b32c9be1"
+        };
+
+        // El appId se extrae directamente de firebaseConfig.appId
+        const appId = firebaseConfig.appId;
+
+        // initialAuthToken ya no es relevante con autenticación de email/password
+        const initialAuthToken = null; 
+
+        // Global variables for Firebase instances
+        let app;
+        let db;
+        let auth;
+        let userId = null; // To store the current user's ID
+        let userName = 'Usuario Anónimo'; // Default user name
+        let userEmail = ''; // To store the current user's email
+        let userAvatar = 'https://placehold.co/48x48/00FFFF/0A0A1A?text=U'; // Default avatar
+
+        // Get elements for user info and post button
+        const userInfoBar = document.getElementById('user-status');
+        const loginButton = document.getElementById('login-button');
+        const submitPostButton = document.getElementById('submit-post-button');
+        const firebaseStatusIndicator = document.getElementById('firebase-status-indicator');
+
+        // Get elements for Auth/Profile modal
+        const authModalOverlay = document.getElementById('auth-modal-overlay');
+        const authModalTitle = document.getElementById('auth-modal-title');
+        const authModalDescription = document.getElementById('auth-modal-description');
+
+        // Auth Form elements
+        const authForm = document.getElementById('auth-form');
+        const authEmailInput = document.getElementById('auth-email-input');
+        const authPasswordInput = document.getElementById('auth-password-input');
+        const registerButton = document.getElementById('register-button');
+        const loginFormButton = document.getElementById('login-form-button');
+        const forgotPasswordLink = document.getElementById('forgot-password-link');
+        const authEmailErrorMessage = document.getElementById('auth-email-error-message');
+        const authPasswordErrorMessage = document.getElementById('auth-password-error-message');
+        const authGeneralErrorMessage = document.getElementById('auth-general-error-message');
+
+        // Profile Form elements (inside auth modal)
+        const profileFormContainer = document.getElementById('profile-form-container');
+        const profileForm = document.getElementById('profile-form');
+        const profileNameInput = document.getElementById('profile-name-input');
+        const profileAvatarUpload = document.getElementById('profile-avatar-upload');
+        const profileNameErrorMessage = document.getElementById('profile-name-error-message');
+        const profileAvatarErrorMessage = document.getElementById('profile-avatar-error-message');
+
+        /**
+         * Updates the Firebase connection status indicator on the page.
+         * @param {boolean} isConnected - True if Firebase is connected, false otherwise.
+         */
+        function updateFirebaseStatus(isConnected) {
+            const statusText = firebaseStatusIndicator.querySelector('span');
+            const statusIcon = firebaseStatusIndicator.querySelector('i');
+
+            if (isConnected) {
+                statusText.textContent = 'Estado de Firebase: Conectado';
+                firebaseStatusIndicator.classList.remove('disconnected');
+                firebaseStatusIndicator.classList.add('connected');
+                statusIcon.classList.remove('fa-circle-xmark');
+                statusIcon.classList.add('fa-circle-check');
+            } else {
+                statusText.textContent = 'Estado de Firebase: Desconectado';
+                firebaseStatusIndicator.classList.remove('connected');
+                firebaseStatusIndicator.classList.add('disconnected');
+                statusIcon.classList.remove('fa-circle-check');
+                statusIcon.classList.add('fa-circle-xmark');
+            }
+        }
+
+        /**
+         * Shows the authentication modal (login/register form).
+         */
+        function showAuthModal() {
+            authModalTitle.textContent = 'Bienvenido al Foro de Byte';
+            authModalDescription.textContent = 'Inicia sesión o regístrate para participar.';
+            authForm.classList.remove('hidden');
+            profileFormContainer.classList.add('hidden'); // Hide profile form
+            authEmailErrorMessage.classList.add('hidden');
+            authPasswordErrorMessage.classList.add('hidden');
+            authGeneralErrorMessage.classList.add('hidden');
+            authModalOverlay.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+
+        /**
+         * Shows the profile creation form (after successful registration).
+         */
+        function showProfileForm() {
+            authModalTitle.textContent = 'Completa tu Perfil';
+            authModalDescription.textContent = 'Para participar en la comunidad, por favor, dinos tu nombre y sube una foto de perfil.';
+            authForm.classList.add('hidden');
+            profileFormContainer.classList.remove('hidden'); // Show profile form
+            profileNameErrorMessage.classList.add('hidden');
+            profileAvatarErrorMessage.classList.add('hidden');
+            authModalOverlay.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+
+        /**
+         * Hides the authentication/profile modal.
+         */
+        function hideAuthModal() {
+            authModalOverlay.classList.remove('show');
+            document.body.style.overflow = ''; // Enable scrolling
+            // Clear form fields
+            authEmailInput.value = '';
+            authPasswordInput.value = '';
+            profileNameInput.value = '';
+            profileAvatarUpload.value = '';
+        }
+
+        // Initialize Firebase and Authentication
+        async function initializeFirebase() {
+            updateFirebaseStatus(false); // Set to connecting initially
+            try {
+                if (Object.keys(firebaseConfig).length === 0) {
+                    console.error("Firebase config is missing. Please ensure firebaseConfig is provided.");
+                    userInfoBar.textContent = "Error: Configuración de Firebase faltante.";
+                    updateFirebaseStatus(false);
+                    return;
+                }
+
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Authenticate user
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Authenticated user ID:", userId);
+
+                        // Check for user profile
+                        const userProfileRef = doc(db, `artifacts/${appId}/users/${userId}/userProfiles`, 'userProfile');
+                        console.log("Attempting to get user profile from path:", userProfileRef.path);
+                        const userProfileSnap = await getDoc(userProfileRef);
+
+                        if (userProfileSnap.exists()) {
+                            const profileData = userProfileSnap.data();
+                            userName = profileData.name;
+                            userEmail = profileData.email;
+                            userAvatar = profileData.avatar || 'https://placehold.co/48x48/00FFFF/0A0A1A?text=' + userName.substring(0, 1).toUpperCase(); // Use stored avatar or default
+                            userInfoBar.textContent = `Conectado como: ${userName} (ID: ${userId.substring(0, 8)}...)`;
+                            loginButton.textContent = 'Cerrar Sesión';
+                            submitPostButton.disabled = false; // Enable post button
+                            updateFirebaseStatus(true); // Firebase connected after successful auth and profile check
+                            listenForPosts(); // Start listening for posts after profile is loaded
+                            hideAuthModal(); // Hide modal if user is authenticated and has a profile
+                        } else {
+                            // No profile found, prompt user to create one
+                            userName = `Usuario: ${user.email ? user.email.split('@')[0] : userId.substring(0, 8)}...`; // Use email part or UID
+                            userEmail = user.email || '';
+                            userInfoBar.textContent = `Conectado como: ${userName} (completa tu perfil)`;
+                            loginButton.textContent = 'Cerrar Sesión';
+                            submitPostButton.disabled = true; // Disable until profile is created
+                            showProfileForm(); // Show profile creation form
+                            updateFirebaseStatus(true); // Still connected to auth, just profile missing
+                        }
+                    } else {
+                        userId = null;
+                        userName = 'Usuario Anónimo';
+                        userEmail = '';
+                        userAvatar = 'https://placehold.co/48x48/00FFFF/0A0A1A?text=U'; // Reset avatar
+                        userInfoBar.textContent = "No conectado";
+                        loginButton.textContent = 'Iniciar Sesión'; // Change button text
+                        submitPostButton.disabled = true; // Disable post button
+                        console.log("No user authenticated.");
+                        // Clear posts if not authenticated
+                        forumPostsContainer.innerHTML = '<h2 class="text-xl sm:text-2xl font-semibold text-center mb-6 text-byte-accent-cyan">Últimas Publicaciones</h2>';
+                        updateFirebaseStatus(false); // Not connected if no user
+                        showAuthModal(); // Show auth modal if not authenticated
+                    }
+                });
+
+                // No longer sign in anonymously by default
+                // await signInAnonymously(auth); 
+
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+                userInfoBar.textContent = `Error de conexión: ${error.message}`;
+                updateFirebaseStatus(false);
+            }
+        }
+
+        // Handle login/logout button click (now acts as a toggle for auth modal or sign out)
+        loginButton.addEventListener('click', async () => {
+            if (auth.currentUser) {
+                // If logged in, sign out
+                try {
+                    await signOut(auth);
+                    console.log("User signed out.");
+                } catch (error) {
+                    console.error("Error signing out:", error);
+                }
+            } else {
+                // If not logged in, show the auth modal
+                showAuthModal();
+            }
+        });
+
+        // --- Authentication Form Logic ---
+        registerButton.addEventListener('click', async () => {
+            const email = authEmailInput.value.trim();
+            const password = authPasswordInput.value.trim();
+            clearAuthErrors();
+
+            if (!email || !password) {
+                authGeneralErrorMessage.textContent = "Por favor, ingresa correo y contraseña.";
+                authGeneralErrorMessage.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                console.log("User registered:", userCredential.user.uid);
+                // onAuthStateChanged will handle showing the profile form
+            } catch (error) {
+                handleAuthError(error);
+            }
+        });
+
+        loginFormButton.addEventListener('click', async () => {
+            const email = authEmailInput.value.trim();
+            const password = authPasswordInput.value.trim();
+            clearAuthErrors();
+
+            if (!email || !password) {
+                authGeneralErrorMessage.textContent = "Por favor, ingresa correo y contraseña.";
+                authGeneralErrorMessage.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                console.log("User logged in:", userCredential.user.uid);
+                // onAuthStateChanged will handle hiding the modal and loading profile
+            } catch (error) {
+                handleAuthError(error);
+            }
+        });
+
+        forgotPasswordLink.addEventListener('click', async (event) => {
+            event.preventDefault();
+            const email = authEmailInput.value.trim();
+            clearAuthErrors();
+
+            if (!email) {
+                authEmailErrorMessage.textContent = "Por favor, ingresa tu correo electrónico para restablecer la contraseña.";
+                authEmailErrorMessage.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                authGeneralErrorMessage.textContent = "Se ha enviado un correo de restablecimiento de contraseña a tu dirección.";
+                authGeneralErrorMessage.classList.remove('hidden');
+                authGeneralErrorMessage.style.color = '#25D366'; // Green for success
+            } catch (error) {
+                handleAuthError(error);
+            }
+        });
+
+        function clearAuthErrors() {
+            authEmailErrorMessage.classList.add('hidden');
+            authPasswordErrorMessage.classList.add('hidden');
+            authGeneralErrorMessage.classList.add('hidden');
+            authGeneralErrorMessage.style.color = '#FF6347'; // Reset to red for errors
+        }
+
+        function handleAuthError(error) {
+            console.error("Authentication error:", error.code, error.message);
+            switch (error.code) {
+                case 'auth/email-already-in-use':
+                    authEmailErrorMessage.textContent = "Este correo electrónico ya está registrado.";
+                    authEmailErrorMessage.classList.remove('hidden');
+                    break;
+                case 'auth/invalid-email':
+                    authEmailErrorMessage.textContent = "El formato del correo electrónico es inválido.";
+                    authEmailErrorMessage.classList.remove('hidden');
+                    break;
+                case 'auth/weak-password':
+                    authPasswordErrorMessage.textContent = "La contraseña debe tener al menos 6 caracteres.";
+                    authPasswordErrorMessage.classList.remove('hidden');
+                    break;
+                case 'auth/user-not-found':
+                case 'auth/wrong-password':
+                    authGeneralErrorMessage.textContent = "Correo electrónico o contraseña incorrectos.";
+                    authGeneralErrorMessage.classList.remove('hidden');
+                    break;
+                case 'auth/missing-password':
+                    authPasswordErrorMessage.textContent = "Por favor, ingresa tu contraseña.";
+                    authPasswordErrorMessage.classList.remove('hidden');
+                    break;
+                case 'auth/network-request-failed':
+                    authGeneralErrorMessage.textContent = "Error de red. Por favor, verifica tu conexión.";
+                    authGeneralErrorMessage.classList.remove('hidden');
+                    break;
+                default:
+                    authGeneralErrorMessage.textContent = `Error de autenticación: ${error.message}`;
+                    authGeneralErrorMessage.classList.remove('hidden');
+                    break;
+            }
+        }
+
+        // --- Profile Form Logic ---
+        // Function for basic name validation (non-AI)
+        function validateName(name) {
+            if (!name || name.trim() === '') {
+                return "El nombre no puede estar vacío.";
+            }
+            if (name.trim().length < 3) {
+                return "El nombre debe tener al menos 3 caracteres.";
+            }
+            const alphanumeric = name.replace(/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/g, '');
+            if (alphanumeric.length / name.length < 0.5) {
+                return "El nombre parece ser inválido. Por favor, usa un nombre real.";
+            }
+            return null; // No error
+        }
+
+        // Handle profile form submission
+        profileForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const name = profileNameInput.value.trim();
+            const avatarFile = profileAvatarUpload.files[0];
+            let avatarUrl = null;
+
+            profileNameErrorMessage.classList.add('hidden');
+            profileAvatarErrorMessage.classList.add('hidden');
+
+            const nameError = validateName(name);
+            if (nameError) {
+                profileNameErrorMessage.textContent = nameError;
+                profileNameErrorMessage.classList.remove('hidden');
+                return;
+            }
+
+            if (!avatarFile) {
+                profileAvatarErrorMessage.textContent = "Por favor, sube una foto de perfil. Es obligatoria.";
+                profileAvatarErrorMessage.classList.remove('hidden');
+                return;
+            }
+
+            if (!userId) {
+                console.error("No hay usuario autenticado para guardar el perfil.");
+                return;
+            }
+
+            // Handle avatar file upload (simulated to Data URL)
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                avatarUrl = e.target.result; // Data URL
+                await saveProfileToFirestore(name, auth.currentUser.email, avatarUrl); // Use current user's email
+            };
+            reader.readAsDataURL(avatarFile);
+        });
+
+        async function saveProfileToFirestore(name, email, avatarUrl) {
+            try {
+                const userProfileRef = doc(db, `artifacts/${appId}/users/${userId}/userProfiles`, 'userProfile');
+                console.log("Attempting to save profile to path:", userProfileRef.path);
+                await setDoc(userProfileRef, {
+                    name: name,
+                    email: email,
+                    avatar: avatarUrl, // Save the avatar URL
+                    createdAt: new Date()
+                }, { merge: true });
+
+                userName = name;
+                userEmail = email;
+                userAvatar = avatarUrl; // Update global avatar
+                userInfoBar.textContent = `Conectado como: ${userName} (ID: ${userId.substring(0, 8)}...)`;
+                submitPostButton.disabled = false; // Enable post button
+                hideAuthModal(); // Hide the modal after profile is saved
+                listenForPosts(); // Start listening for posts now that profile is ready
+                console.log("Perfil de usuario guardado con éxito.");
+                updateFirebaseStatus(true); // Confirm connected after profile save
+            } catch (e) {
+                console.error("Error al guardar el perfil: ", e);
+                updateFirebaseStatus(false);
+            }
+        }
+
+
+        // Array to store forum posts (will be populated from Firestore)
+        let forumPosts = [];
+
+        const forumPostsContainer = document.getElementById('forum-posts-container');
+        const newPostForm = document.getElementById('new-post-form');
+        const postTextInput = document.getElementById('post-text');
+        const postImageUpload = document.getElementById('post-image-upload');
+
+        // Function to render all posts
+        function renderPosts() {
+            forumPostsContainer.innerHTML = '<h2 class="text-xl sm:text-2xl font-semibold text-center mb-6 text-byte-accent-cyan">Últimas Publicaciones</h2>'; // Clear and re-add title
+            if (forumPosts.length === 0) {
+                forumPostsContainer.innerHTML += '<p class="text-center text-gray-400">No hay publicaciones aún. ¡Sé el primero en publicar!</p>';
+            }
+            forumPosts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'post-card';
+                postElement.setAttribute('data-post-id', post.id); // Firestore doc ID
+
+                let postImageHtml = '';
+                if (post.image) {
+                    postImageHtml = `<img src="${post.image}" alt="Imagen de la publicación" class="post-image" onerror="this.onerror=null; this.src='https://placehold.co/600x300/FF0000/FFFFFF?text=Error+al+cargar+imagen';">`;
+                }
+
+                // Ensure reactions object exists and has default values
+                const reactions = post.reactions || { like: 0, love: 0, haha: 0 };
+                const userReaction = post.userReactions ? post.userReactions[userId] : null;
+
+                postElement.innerHTML = `
+                    <div class="post-header">
+                        <img src="${post.authorAvatar || 'https://placehold.co/48x48/00FFFF/0A0A1A?text=U'}" alt="Avatar de ${post.authorName || 'Usuario'}" class="post-avatar">
+                        <div>
+                            <p class="post-author">${post.authorName || 'Usuario Desconocido'}</p>
+                            <p class="post-timestamp">${new Date(post.timestamp.seconds * 1000).toLocaleString()}</p>
+                            <p class="text-xs text-gray-500">ID: ${post.authorId ? post.authorId.substring(0, 8) + '...' : 'N/A'}</p>
+                        </div>
+                    </div>
+                    <p class="post-content">${post.content}</p>
+                    ${postImageHtml}
+                    <div class="post-actions">
+                        <button class="reaction-button ${userReaction === 'like' ? 'active' : ''}" data-reaction-type="like">
+                            <i class="fas fa-thumbs-up"></i> Me gusta <span class="reaction-count">${reactions.like || 0}</span>
+                        </button>
+                        <button class="reaction-button ${userReaction === 'love' ? 'active' : ''}" data-reaction-type="love">
+                            <i class="fas fa-heart"></i> Me encanta <span class="reaction-count">${reactions.love || 0}</span>
+                        </button>
+                        <button class="reaction-button ${userReaction === 'haha' ? 'active' : ''}" data-reaction-type="haha">
+                            <i class="fas fa-laugh-squint"></i> Me divierte <span class="reaction-count">${reactions.haha || 0}</span>
+                        </button>
+                    </div>
+                    <div class="comment-section">
+                        <div class="comment-input-container">
+                            <input type="text" placeholder="Escribe un comentario..." class="comment-input" data-post-id="${post.id}" ${userId && userName !== 'Usuario Anónimo' ? '' : 'disabled'}>
+                            <button class="comment-button" data-post-id="${post.id}" ${userId && userName !== 'Usuario Anónimo' ? '' : 'disabled'}>Comentar</button>
+                        </div>
+                        <ul class="comment-list">
+                            ${(post.comments || []).map(comment => `
+                                <li class="comment-item">
+                                    <p class="comment-author">${comment.authorName || 'Usuario Desconocido'}</p>
+                                    <p class="comment-text">${comment.text}</p>
+                                    <p class="text-xs text-gray-500">${new Date(comment.timestamp.seconds * 1000).toLocaleString()}</p>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+                forumPostsContainer.appendChild(postElement);
+            });
+
+            // Re-attach event listeners after rendering
+            attachEventListeners();
+        }
+
+        // Function to attach event listeners to dynamic elements
+        function attachEventListeners() {
+            document.querySelectorAll('.reaction-button').forEach(button => {
+                button.onclick = (event) => {
+                    if (!userId || userName === 'Usuario Anónimo') {
+                        console.log("Debes completar tu perfil para reaccionar.");
+                        return;
+                    }
+                    toggleReaction(event.currentTarget.closest('.post-card').dataset.postId, button.dataset.reactionType);
+                };
+            });
+
+            document.querySelectorAll('.comment-button').forEach(button => {
+                button.onclick = (event) => {
+                    if (!userId || userName === 'Usuario Anónimo') {
+                        console.log("Debes completar tu perfil para comentar.");
+                        return;
+                    }
+                    const postId = event.currentTarget.dataset.postId;
+                    const commentInput = document.querySelector(`.comment-input[data-post-id="${postId}"]`);
+                    addComment(postId, commentInput.value);
+                    commentInput.value = ''; // Clear input after commenting
+                };
+            });
+        }
+
+        // Listen for real-time updates from Firestore
+        function listenForPosts() {
+            if (!db) {
+                console.error("Firestore not initialized.");
+                updateFirebaseStatus(false);
+                return;
+            }
+            const postsCollectionRef = collection(db, `artifacts/${appId}/public/data/forumPosts`);
+            console.log("Attempting to listen to posts from path:", postsCollectionRef.path);
+            
+            onSnapshot(postsCollectionRef, (snapshot) => {
+                forumPosts = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                // Sort in memory instead of Firestore query
+                forumPosts.sort((a, b) => b.timestamp.seconds - a.timestamp.seconds);
+                renderPosts();
+                updateFirebaseStatus(true); // Confirm connected after successful data fetch
+            }, (error) => {
+                console.error("Error listening to posts:", error);
+                updateFirebaseStatus(false); // Set to disconnected on error
+            });
+        }
+
+        // Function to add a new post to Firestore
+        newPostForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (!userId || userName === 'Usuario Anónimo') {
+                console.log("Debes completar tu perfil para publicar.");
+                return;
+            }
+
+            const content = postTextInput.value.trim();
+            const imageFile = postImageUpload.files[0];
+            let imageUrl = null;
+
+            if (imageFile) {
+                imageUrl = URL.createObjectURL(imageFile);
+                console.warn("La carga de imágenes es simulada. En una aplicación real, usa Firebase Storage.");
+            }
+
+            if (content || imageUrl) {
+                try {
+                    const postsCollectionRef = collection(db, `artifacts/${appId}/public/data/forumPosts`);
+                    console.log("Attempting to add post to path:", postsCollectionRef.path);
+                    await addDoc(postsCollectionRef, {
+                        authorId: userId,
+                        authorName: userName, // Use the authenticated user's name
+                        authorEmail: userEmail, // Store user's email
+                        authorAvatar: userAvatar, // Use the user's actual avatar
+                        timestamp: new Date(),
+                        content: content,
+                        image: imageUrl,
+                        reactions: { like: 0, love: 0, haha: 0 }, // Initialize reactions
+                        userReactions: {} // To store which user reacted with what
+                    });
+                    postTextInput.value = '';
+                    postImageUpload.value = ''; // Clear file input
+                    console.log("Publicación añadida con éxito.");
+                } catch (e) {
+                    console.error("Error al añadir la publicación: ", e);
+                }
+            } else {
+                console.log('No se puede publicar un post vacío.');
+            }
+        });
+
+        // Function to handle reactions in Firestore
+        async function toggleReaction(postId, reactionType) {
+            if (!userId || userName === 'Usuario Anónimo') {
+                console.log("Debes completar tu perfil para reaccionar.");
+                return;
+            }
+            const postRef = doc(db, `artifacts/${appId}/public/data/forumPosts`, postId);
+            console.log("Attempting to update reaction on post path:", postRef.path);
+
+            try {
+                const postSnapshot = await getDoc(postRef);
+                if (!postSnapshot.exists()) {
+                    console.error("Post does not exist:", postId);
+                    return;
+                }
+
+                const postData = postSnapshot.data();
+                const currentReactions = postData.reactions || { like: 0, love: 0, haha: 0 };
+                const currentUserReactions = postData.userReactions || {};
+
+                const previousReaction = currentUserReactions[userId];
+
+                let updates = {};
+
+                if (previousReaction === reactionType) {
+                    // User is un-reacting
+                    updates[`reactions.${reactionType}`] = (currentReactions[reactionType] || 0) - 1;
+                    const newUserReactions = { ...currentUserReactions };
+                    delete newUserReactions[userId];
+                    updates.userReactions = newUserReactions;
+                } else {
+                    // User is reacting or changing reaction
+                    if (previousReaction) {
+                        // Decrement previous reaction count
+                        updates[`reactions.${previousReaction}`] = (currentReactions[previousReaction] || 0) - 1;
+                    }
+                    // Increment new reaction count
+                    updates[`reactions.${reactionType}`] = (currentReactions[reactionType] || 0) + 1;
+                    updates[`userReactions.${userId}`] = reactionType; // Set user's new reaction
+                }
+
+                await updateDoc(postRef, updates);
+                console.log("Reacción actualizada con éxito.");
+
+            } catch (e) {
+                console.error("Error al actualizar la reacción: ", e);
+            }
+        }
+
+        // Function to add comments to Firestore
+        async function addComment(postId, commentText) {
+            if (!userId || userName === 'Usuario Anónimo') {
+                console.log("Debes completar tu perfil para comentar.");
+                return;
+            }
+            if (commentText.trim() === '') return;
+
+            const postRef = doc(db, `artifacts/${appId}/public/data/forumPosts`, postId);
+            console.log("Attempting to add comment to post path:", postRef.path);
+            const newComment = {
+                authorId: userId,
+                authorName: userName,
+                text: commentText.trim(),
+                timestamp: new Date()
+            };
+
+            try {
+                await updateDoc(postRef, {
+                    comments: arrayUnion(newComment)
+                });
+                console.log("Comentario añadido con éxito.");
+            } catch (e) {
+                console.error("Error al añadir el comentario: ", e);
+            }
+        }
+
+        // Initial setup on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeFirebase(); // Initialize Firebase and authentication
+
+            const scrollToTopButton = document.getElementById('scroll-to-top-button');
+            const mainHeader = document.getElementById('main-header');
+            let lastScrollY = 0;
+
+            window.addEventListener('scroll', () => {
+                const currentScrollY = window.scrollY;
+                if (currentScrollY > 0) {
+                    scrollToTopButton.classList.add('show');
+                } else {
+                    scrollToTopButton.classList.remove('show');
+                }
+
+                if (currentScrollY > lastScrollY && currentScrollY > 0) {
+                    mainHeader.classList.add('header-hide');
+                } else if (currentScrollY < lastScrollY || currentScrollY === 0) {
+                    mainHeader.classList.remove('header-hide');
+                }
+                lastScrollY = currentScrollY;
+            });
+
+            scrollToTopButton.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
